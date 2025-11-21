@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>我的个人导航 | My Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 引入 Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* 白天主题 */
+            --bg: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            --text: #2c3e50;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.85);
+            --nav-active: rgba(255, 255, 255, 0.9);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --snow-color: rgba(255, 255, 255, 0.8);
+            --accent: #6c5ce7;
+        }
+
+        /* 夜间主题 */
+        body.dark {
+            --bg: linear-gradient(120deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            --text: #ecf0f1;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-hover: rgba(255, 255, 255, 0.15);
+            --nav-active: rgba(255, 255, 255, 0.2);
+            --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            --snow-color: rgba(255, 255, 255, 0.6);
+            --accent: #a29bfe;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.5s, color 0.5s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 顶部控制栏 */
+        .top-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .control-btn {
+            background: var(--glass-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            background: var(--card-hover);
+        }
+
+        /* 主容器 */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* 时钟组件 */
+        .clock-container {
+            text-align: center;
+            margin-bottom: 30px;
+            margin-top: 40px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .time {
+            font-size: 72px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+
+        .date {
+            font-size: 18px;
+            margin-top: 10px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* 搜索组件 */
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .search-box {
+            display: flex;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 5px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .search-box:focus-within {
+            transform: scale(1.02);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+            background: var(--card-hover);
+        }
+
+        .search-engine-select {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            padding: 0 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border-right: 1px solid var(--glass-border);
+            outline: none;
+            font-family: inherit;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            color: var(--text);
+            outline: none;
+        }
+
+        .search-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .search-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* 导航分类 */
+        .nav-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-item {
+            padding: 10px 20px;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-3px);
+            background: var(--card-hover);
+        }
+
+        .nav-item.active {
+            background: var(--nav-active);
+            color: var(--accent);
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+        }
+
+        /* 卡片网格 */
+        .links {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 25px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: var(--card-hover);
+            box-shadow: var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .card-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .card-desc {
+            font-size: 13px;
+            opacity: 0.7;
+            line-height: 1.4;
+        }
+
+        /* 雪花容器 */
+        .snow-container {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -20px;
+            color: var(--snow-color);
+            user-select: none;
+            pointer-events: none;
+            animation-name: snowfall;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes snowfall {
+            to {
+                transform: translateY(105vh);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 底部 */
+        footer {
+            margin-top: 50px;
+            font-size: 12px;
+            opacity: 0.6;
+            text-align: center;
+            padding-bottom: 20px;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            .time {
+                font-size: 42px;
+            }
+
+            .date {
+                font-size: 14px;
+            }
+
+            .search-container {
+                width: 100%;
+                margin-bottom: 25px;
+            }
+
+            .search-input {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            .search-btn {
+                padding: 0 15px;
+                font-size: 14px;
+            }
+
+            .nav-bar {
+                gap: 10px;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                width: 100%;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .nav-bar::-webkit-scrollbar {
+                display: none;
+            }
+
+            .nav-item {
+                flex-shrink: 0;
+                white-space: nowrap;
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .links {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card-icon {
+                font-size: 20px;
+            }
+
+            .card-title {
+                font-size: 15px;
+            }
+
+            .card-desc {
+                font-size: 12px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+
+            .top-controls {
+                top: 15px;
+                right: 15px;
+            }
+
+            .control-btn {
+                padding: 6px 10px;
+            }
+
+            .control-btn span {
+                display: none;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .time {
+                font-size: 36px;
+            }
+
+            .links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 雪花层 -->
+    <div class="snow-container" id="snow"></div>
+
+    <!-- 顶部控制按钮 -->
+    <div class="top-controls">
+        <div class="control-btn" id="toggleTheme" title="切换主题">
+            <i>🌓</i> <span>主题</span>
+        </div>
+        <div class="control-btn" id="toggleSnow" title="切换雪花">
+            <i>❄️</i> <span>雪花</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 时钟 -->
+        <div class="clock-container">
+            <div class="time" id="clock">00:00</div>
+            <div class="date" id="date">2023年1月1日 星期日</div>
+        </div>
+
+        <!-- 搜索框 -->
+        <div class="search-container">
+            <div class="search-box">
+                <select class="search-engine-select" id="searchEngine">
+                    <option value="baidu">百度</option>
+                    <option value="bing">Bing</option>
+                    <option value="google">谷歌</option>
+                </select>
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索你感兴趣的内容..." autocomplete="off">
+                <button class="search-btn" id="searchBtn">搜索</button>
+            </div>
+        </div>
+
+        <!-- 分类导航（将由 JavaScript 动态生成） -->
+        <div class="nav-bar">
+            <!-- 导航项将从数据库动态加载 -->
+        </div>
+
+        <!-- 链接卡片容器 -->
+        <div class="links" id="linksContainer">
+            <!-- 卡片将通过 JS 动态生成 -->
+        </div>
+
+        <footer>
+            &copy; 2023 My Personal Dashboard. Designed with ❤️ by AI.
+        </footer>
+    </div>
+
+    <script>
+        /* --- 数据配置 (从后端获取) --- */
+        let navData = [];
+        const linksContainer = document.getElementById('linksContainer');
+        const navBar = document.querySelector('.nav-bar');
+
+        // 获取后端数据并动态生成导航栏
+        async function fetchNavData() {
+            try {
+                // 使用相对路径，自动连接同域名的后端
+                const response = await fetch('/api/nav');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                navData = await response.json();
+
+                // 动态生成导航栏
+                generateNavBar();
+
+                // 渲染第一个分类的数据（如果有数据）
+                if (navData.length > 0) {
+                    renderCards(navData[0].name);
+                }
+            } catch (error) {
+                console.error('Error fetching navigation data:', error);
+                linksContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text); background: var(--glass-bg); border-radius: 20px; border: 1px solid var(--glass-border);">
+                        <h3>无法连接到后端服务 🔌</h3>
+                        <p>请确保 Spring Boot 项目 (nav-backend) 已在端口 8080 启动。</p>
+                        <p style="font-size: 12px; opacity: 0.7; margin-top: 10px;">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 动态生成导航栏
+        function generateNavBar() {
+            navBar.innerHTML = ''; // 清空现有导航项
+
+            navData.forEach((category, index) => {
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item';
+                if (index === 0) {
+                    navItem.classList.add('active'); // 第一个默认激活
+                }
+                navItem.dataset.category = category.name;
+                navItem.innerHTML = `${category.icon || '�'} ${category.name}`;
+
+                // 添加点击事件
+                navItem.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    navItem.classList.add('active');
+                    renderCards(category.name);
+                });
+
+                navBar.appendChild(navItem);
+            });
+        }
+
+        /* --- 动态渲染卡片 --- */
+        function renderCards(filterCategory) {
+            linksContainer.innerHTML = ''; // 清空现有内容
+
+            if (!navData || navData.length === 0) return;
+
+            let allItems = [];
+            navData.forEach(group => {
+                // 后端返回字段: name (分类名), links (链接列表)
+                if (group.links) {
+                    group.links.forEach(item => {
+                        // 给每个item附加分类信息
+                        item.category = group.name;
+                        allItems.push(item);
+                    });
+                }
+            });
+
+            allItems.forEach(item => {
+                // 过滤逻辑：匹配分类
+                if (item.category === filterCategory) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.onclick = () => window.open(item.url);
+
+                    // 简单的入场动画
+                    card.style.animation = 'fadeIn 0.5s ease forwards';
+
+                    card.innerHTML = `
+                        <div class="card-icon">${item.icon || '�'}</div>
+                        <div class="card-title">${item.title}</div>
+                        <div class="card-desc">${item.description || ''}</div>
+                    `;
+                    linksContainer.appendChild(card);
+                }
+            });
+        }
+
+        // 初始化：尝试获取数据
+        fetchNavData();
+
+        /* --- 时钟功能 --- */
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', options);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        /* --- 搜索功能 --- */
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchEngine = document.getElementById('searchEngine');
+
+        function performSearch() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+
+            let url = '';
+            const engine = searchEngine.value;
+
+            if (engine === 'baidu') {
+                url = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+            } else if (engine === 'bing') {
+                url = `https://cn.bing.com/search?q=${encodeURIComponent(query)}`;
+            } else if (engine === 'google') {
+                url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
+
+            window.open(url, '_blank');
+        }
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        /* --- 主题切换 --- */
+        const toggleThemeBtn = document.getElementById('toggleTheme');
+        toggleThemeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            toggleThemeBtn.querySelector('span').textContent = isDark ? '夜间' : '主题';
+        });
+
+        /* --- 雪花特效 --- */
+        const snowContainer = document.getElementById('snow');
+        let snowInterval;
+        let isSnowing = true;
+
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.classList.add('snowflake');
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+            snowflake.style.opacity = Math.random();
+            snowflake.style.animationDuration = Math.random() * 3 + 5 + 's'; // 5-8s
+
+            snowContainer.appendChild(snowflake);
+
+            // 动画结束后移除
+            setTimeout(() => {
+                snowflake.remove();
+            }, 8000);
+        }
+
+        function startSnow() {
+            snowInterval = setInterval(createSnowflake, 200);
+        }
+
+        function stopSnow() {
+            clearInterval(snowInterval);
+            snowContainer.innerHTML = '';
+        }
+
+        startSnow(); // 默认开启
+
+        const toggleSnowBtn = document.getElementById('toggleSnow');
+        toggleSnowBtn.addEventListener('click', () => {
+            isSnowing = !isSnowing;
+            if (isSnowing) {
+                startSnow();
+                toggleSnowBtn.style.opacity = '1';
+            } else {
+                stopSnow();
+                toggleSnowBtn.style.opacity = '0.5';
+            }
+        });
+    </script>
+</body>
+
+</html>
