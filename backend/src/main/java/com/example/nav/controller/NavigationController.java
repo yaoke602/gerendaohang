@@ -20,6 +20,6 @@ public class NavigationController {
 
     @GetMapping("/nav")
     public List<Category> getNavigationData() {
-        return categoryRepository.findAll();
+        return categoryRepository.findAllByOrderBySortOrderAsc();
     }
 }

@@ -6,177 +6,353 @@
     <title>我的个人导航 | My Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 引入 Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@300;400;600&display=swap"
-        rel="stylesheet">
-
     <style>
         :root {
-            /* 白天主题 */
-            --bg: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
-            --text: #2c3e50;
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --card-hover: rgba(255, 255, 255, 0.85);
-            --nav-active: rgba(255, 255, 255, 0.9);
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --bg: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            --text: #2d3436;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --card-hover: rgba(255, 255, 255, 0.4);
+            --nav-active: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+            --shadow-hover: 0 12px 40px 0 rgba(31, 38, 135, 0.15);
             --snow-color: rgba(255, 255, 255, 0.8);
             --accent: #6c5ce7;
+            --accent-hover: #5649c0;
         }
 
         /* 夜间主题 */
         body.dark {
-            --bg: linear-gradient(120deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
-            --text: #ecf0f1;
-            --glass-bg: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --card-hover: rgba(255, 255, 255, 0.15);
-            --nav-active: rgba(255, 255, 255, 0.2);
+            --bg: linear-gradient(135deg, #1e2024 0%, #232526 100%);
+            --text: #dfe6e9;
+            --glass-bg: rgba(30, 30, 30, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-hover: rgba(45, 45, 45, 0.8);
+            --nav-active: rgba(50, 50, 50, 0.9);
             --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            --snow-color: rgba(255, 255, 255, 0.6);
+            --shadow-hover: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+            --snow-color: rgba(255, 255, 255, 0.4);
             --accent: #a29bfe;
+            --accent-hover: #8e84f5;
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             font-family: 'Outfit', 'Noto Sans SC', sans-serif;
             background: var(--bg);
             background-attachment: fixed;
             color: var(--text);
             min-height: 100vh;
-            transition: background 0.5s, color 0.5s;
+            transition: background 0.5s ease, color 0.5s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
+            overflow-x: hidden;
         }
 
         /* 顶部控制栏 */
         .top-controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+            position: fixed;
+            top: 25px;
+            right: 30px;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             z-index: 100;
         }
 
         .control-btn {
             background: var(--glass-bg);
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 10px 18px;
+            border-radius: 30px;
             cursor: pointer;
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            transition: 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 14px;
+            font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 5px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            gap: 8px;
+            box-shadow: var(--shadow);
+            color: var(--text);
+            text-decoration: none;
+            user-select: none;
         }
 
         .control-btn:hover {
             transform: translateY(-2px);
             background: var(--card-hover);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .control-btn i {
+            font-style: normal;
+            font-size: 16px;
+        }
+
+        /* 天气组件 - 左上角固定 */
+        .weather-card {
+            position: fixed;
+            top: 25px;
+            left: 30px;
+            width: 280px;
+            z-index: 100;
+            background: var(--glass-bg);
+            border-radius: 24px;
+            padding: 25px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* 待办事项组件 - 右上角控制按钮下方 */
+        .todo-card {
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            width: 320px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            z-index: 100;
+            background: var(--glass-bg);
+            border-radius: 24px;
+            padding: 25px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            animation: fadeInDown 1s ease-out 0.2s backwards;
+        }
+
+        .todo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .weather-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weather-temp {
+            font-size: 42px;
+            font-weight: 700;
+        }
+
+        .weather-desc {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .todo-input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .todo-input-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            outline: none;
+        }
+
+        .todo-input-box button {
+            padding: 0 15px;
+            border-radius: 12px;
+            border: none;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .todo-list {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .todo-item.completed span {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .todo-checkbox {
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
+        }
+
+        .todo-delete {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .todo-delete:hover {
+            opacity: 1;
+            color: #ff7675;
         }
 
         /* 主容器 */
         .container {
             width: 100%;
             max-width: 1200px;
-            padding: 40px 20px;
+            padding: 60px 20px 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 1;
+            position: relative;
         }
 
         /* 时钟组件 */
         .clock-container {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
             margin-top: 40px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 1s ease-out;
         }
 
         .time {
-            font-size: 72px;
-            font-weight: 600;
-            letter-spacing: 2px;
+            font-size: 88px;
+            font-weight: 700;
+            letter-spacing: -2px;
             line-height: 1;
+            background: linear-gradient(to bottom right, var(--text), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
         }
 
         .date {
             font-size: 18px;
-            margin-top: 10px;
-            opacity: 0.9;
-            font-weight: 300;
+            opacity: 0.8;
+            font-weight: 400;
+            letter-spacing: 1px;
         }
 
         /* 搜索组件 */
         .search-container {
             width: 100%;
-            max-width: 600px;
-            margin-bottom: 40px;
+            max-width: 680px;
+            margin-bottom: 50px;
             position: relative;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
         }
 
         .search-box {
             display: flex;
             background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 5px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 40px;
+            padding: 6px;
             box-shadow: var(--shadow);
             border: 1px solid var(--glass-border);
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
 
         .search-box:focus-within {
-            transform: scale(1.02);
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: var(--shadow-hover);
             background: var(--card-hover);
+            border-color: var(--accent);
         }
 
         .search-engine-select {
             background: transparent;
             border: none;
             color: var(--text);
-            padding: 0 15px;
+            padding: 0 20px;
             font-size: 16px;
             cursor: pointer;
             border-right: 1px solid var(--glass-border);
             outline: none;
             font-family: inherit;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .search-engine-select:hover {
+            color: var(--accent);
         }
 
         .search-input {
             flex: 1;
             background: transparent;
             border: none;
-            padding: 15px;
+            padding: 16px 20px;
             font-size: 18px;
             color: var(--text);
             outline: none;
+            font-weight: 400;
+        }
+
+        .search-input::placeholder {
+            color: var(--text);
+            opacity: 0.5;
         }
 
         .search-btn {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 0 25px;
-            border-radius: 25px;
+            padding: 0 32px;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 16px;
-            transition: 0.3s;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
         }
 
         .search-btn:hover {
-            opacity: 0.9;
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
         }
 
         /* 导航分类 */
@@ -184,25 +360,31 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
         }
 
         .nav-item {
-            padding: 10px 20px;
+            padding: 10px 24px;
             background: var(--glass-bg);
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--glass-border);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 15px;
             font-weight: 500;
+            color: var(--text);
+            opacity: 0.8;
         }
 
         .nav-item:hover {
             transform: translateY(-3px);
             background: var(--card-hover);
+            opacity: 1;
+            box-shadow: var(--shadow);
         }
 
         .nav-item.active {
@@ -211,22 +393,25 @@
             font-weight: 700;
             box-shadow: var(--shadow);
             border-color: var(--accent);
+            opacity: 1;
         }
 
         /* 卡片网格 */
         .links {
             width: 100%;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 25px;
             perspective: 1000px;
+            animation: fadeInUp 1s ease-out 0.6s backwards;
         }
 
         .card {
             background: var(--glass-bg);
-            border-radius: 20px;
-            padding: 25px;
-            backdrop-filter: blur(8px);
+            border-radius: 24px;
+            padding: 28px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
@@ -234,7 +419,8 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 12px;
+            height: 100%;
         }
 
         .card::before {
@@ -246,7 +432,7 @@
             height: 100%;
             background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: translateX(-100%);
-            transition: 0.5s;
+            transition: 0.6s;
         }
 
         .card:hover::before {
@@ -254,27 +440,34 @@
         }
 
         .card:hover {
-            transform: translateY(-10px) scale(1.02);
+            transform: translateY(-8px) scale(1.02);
             background: var(--card-hover);
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-hover);
             border-color: var(--accent);
         }
 
         .card-icon {
-            font-size: 24px;
+            font-size: 32px;
             margin-bottom: 5px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
         }
 
         .card-title {
             font-size: 18px;
             font-weight: 700;
             color: var(--text);
+            letter-spacing: 0.5px;
         }
 
         .card-desc {
-            font-size: 13px;
+            font-size: 14px;
             opacity: 0.7;
-            line-height: 1.4;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         /* 雪花容器 */
@@ -305,10 +498,10 @@
             }
         }
 
-        @keyframes fadeIn {
+        @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(10px);
+                transform: translateY(30px);
             }
 
             to {
@@ -317,41 +510,66 @@
             }
         }
 
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
         /* 底部 */
         footer {
-            margin-top: 50px;
-            font-size: 12px;
+            margin-top: 60px;
+            font-size: 13px;
             opacity: 0.6;
             text-align: center;
-            padding-bottom: 20px;
+            padding-bottom: 30px;
+            font-weight: 300;
         }
 
         /* 移动端适配 */
         @media (max-width: 768px) {
             .container {
-                padding: 20px 15px;
+                padding: 80px 15px 30px;
             }
 
             .time {
-                font-size: 42px;
+                font-size: 56px;
             }
 
             .date {
-                font-size: 14px;
+                font-size: 15px;
             }
 
             .search-container {
                 width: 100%;
-                margin-bottom: 25px;
+                margin-bottom: 30px;
             }
 
             .search-input {
-                padding: 12px;
+                padding: 14px;
                 font-size: 16px;
             }
 
             .search-btn {
-                padding: 0 15px;
+                padding: 0 20px;
                 font-size: 14px;
             }
 
@@ -362,8 +580,9 @@
                 justify-content: flex-start;
                 width: 100%;
                 padding-bottom: 10px;
-                margin-bottom: 20px;
+                margin-bottom: 25px;
                 -webkit-overflow-scrolling: touch;
+                padding-left: 5px;
             }
 
             .nav-bar::-webkit-scrollbar {
@@ -373,66 +592,79 @@
             .nav-item {
                 flex-shrink: 0;
                 white-space: nowrap;
-                padding: 8px 16px;
+                padding: 8px 18px;
                 font-size: 14px;
             }
 
             .links {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
+                gap: 15px;
             }
 
             .card {
-                padding: 15px;
+                padding: 20px;
+                border-radius: 18px;
             }
 
             .card-icon {
-                font-size: 20px;
+                font-size: 26px;
             }
 
             .card-title {
-                font-size: 15px;
+                font-size: 16px;
             }
 
             .card-desc {
                 font-size: 12px;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                line-clamp: 2;
-                -webkit-box-orient: vertical;
-                overflow: hidden;
             }
 
             .top-controls {
                 top: 15px;
                 right: 15px;
+                gap: 8px;
             }
 
             .control-btn {
-                padding: 6px 10px;
+                padding: 8px 12px;
             }
 
             .control-btn span {
                 display: none;
             }
-        }
 
-        @media (max-width: 375px) {
-            .time {
-                font-size: 36px;
+            .control-btn i {
+                font-size: 18px;
             }
 
-            .links {
-                grid-template-columns: 1fr;
+            .weather-card {
+                top: 15px;
+                left: 15px;
+                width: 240px;
+            }
+
+            .todo-card {
+                top: 70px;
+                right: 15px;
+                width: 280px;
             }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- 雪花层 -->
     <div class="snow-container" id="snow"></div>
+
+    <!-- 天气组件 - 左上角 -->
+    <div class="weather-card">
+        <div class="widget-header">
+            <span>🌤️ 天气</span>
+            <span class="weather-loc" id="weatherLoc">定位中...</span>
+        </div>
+        <div class="weather-content" id="weatherContent">
+            <div class="weather-temp">--°C</div>
+            <div class="weather-desc">加载中...</div>
+        </div>
+    </div>
 
     <!-- 顶部控制按钮 -->
     <div class="top-controls">
@@ -441,6 +673,24 @@
         </div>
         <div class="control-btn" id="toggleSnow" title="切换雪花">
             <i>❄️</i> <span>雪花</span>
+        </div>
+        <a href="admin.html" class="control-btn" title="管理后台">
+            <i>⚙️</i> <span>管理</span>
+        </a>
+    </div>
+
+    <!-- 待办事项组件 - 右上角控制按钮下方 -->
+    <div class="todo-card">
+        <div class="widget-header">
+            <span>📝 待办事项</span>
+            <span class="todo-count" id="todoCount">0</span>
+        </div>
+        <div class="todo-input-box">
+            <input type="text" id="todoInput" placeholder="添加新任务...">
+            <button id="addTodoBtn">+</button>
+        </div>
+        <div class="todo-list" id="todoList">
+            <!-- 待办项动态生成 -->
         </div>
     </div>
 
@@ -464,7 +714,7 @@
             </div>
         </div>
 
-        <!-- 分类导航（将由 JavaScript 动态生成） -->
+        <!-- 分类导航 -->
         <div class="nav-bar">
             <!-- 导航项将从数据库动态加载 -->
         </div>
@@ -525,7 +775,7 @@
                     navItem.classList.add('active'); // 第一个默认激活
                 }
                 navItem.dataset.category = category.name;
-                navItem.innerHTML = `${category.icon || '�'} ${category.name}`;
+                navItem.innerHTML = `${category.icon || '📁'} ${category.name}`;
 
                 // 添加点击事件
                 navItem.addEventListener('click', () => {
@@ -563,11 +813,11 @@
                     card.className = 'card';
                     card.onclick = () => window.open(item.url);
 
-                    // 简单的入场动画
-                    card.style.animation = 'fadeIn 0.5s ease forwards';
+                    // 入场动画
+                    card.style.animation = 'cardEnter 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
 
                     card.innerHTML = `
-                        <div class="card-icon">${item.icon || '�'}</div>
+                        <div class="card-icon">${item.icon || '🔗'}</div>
                         <div class="card-title">${item.title}</div>
                         <div class="card-desc">${item.description || ''}</div>
                     `;
@@ -586,9 +836,15 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             document.getElementById('clock').textContent = `${hours}:${minutes}`;
 
-            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
+            const options = {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            };
             document.getElementById('date').textContent = now.toLocaleDateString('zh-CN', options);
         }
+
         setInterval(updateClock, 1000);
         updateClock();
 
@@ -672,6 +928,82 @@
                 toggleSnowBtn.style.opacity = '0.5';
             }
         });
+
+        /* --- 天气组件 (模拟数据) --- */
+        // 实际开发中可对接高德/百度天气API
+        function updateWeather() {
+            const weatherLoc = document.getElementById('weatherLoc');
+            const weatherContent = document.getElementById('weatherContent');
+
+            // 模拟获取地理位置和天气
+            setTimeout(() => {
+                weatherLoc.textContent = '北京';
+                weatherContent.innerHTML = `
+                    <div class="weather-temp">24°C</div>
+                    <div class="weather-desc">晴朗 | 湿度 45%</div>
+                `;
+            }, 1000);
+        }
+        updateWeather();
+
+        /* --- 待办事项组件 --- */
+        const todoInput = document.getElementById('todoInput');
+        const addTodoBtn = document.getElementById('addTodoBtn');
+        const todoList = document.getElementById('todoList');
+        const todoCount = document.getElementById('todoCount');
+
+        // 从 localStorage 加载
+        let todos = JSON.parse(localStorage.getItem('nav_todos')) || [];
+
+        function saveTodos() {
+            localStorage.setItem('nav_todos', JSON.stringify(todos));
+            renderTodos();
+        }
+
+        function renderTodos() {
+            todoList.innerHTML = '';
+            todoCount.textContent = todos.length;
+
+            todos.forEach((todo, index) => {
+                const item = document.createElement('div');
+                item.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+                item.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${todo.completed ? 'checked' : ''}>
+                    <span>${todo.text}</span>
+                    <span class="todo-delete">✖</span>
+                `;
+
+                // 切换状态
+                item.querySelector('.todo-checkbox').addEventListener('change', () => {
+                    todos[index].completed = !todos[index].completed;
+                    saveTodos();
+                });
+
+                // 删除
+                item.querySelector('.todo-delete').addEventListener('click', () => {
+                    todos.splice(index, 1);
+                    saveTodos();
+                });
+
+                todoList.appendChild(item);
+            });
+        }
+
+        addTodoBtn.addEventListener('click', () => {
+            const text = todoInput.value.trim();
+            if (text) {
+                todos.push({ text, completed: false });
+                todoInput.value = '';
+                saveTodos();
+            }
+        });
+
+        todoInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTodoBtn.click();
+        });
+
+        renderTodos();
+
     </script>
 </body>
 

@@ -17,6 +17,7 @@ public class Category {
     private Integer sortOrder;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @OrderBy("sortOrder ASC")
     @lombok.ToString.Exclude
     private List<Link> links;
 }

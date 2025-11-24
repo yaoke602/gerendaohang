@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>导航管理 | Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+            --text: #2c3e50;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --card-hover: rgba(255, 255, 255, 0.85);
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+            --accent: #6c5ce7;
+            --danger: #ff7675;
+            --success: #00b894;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Outfit', 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            color: white;
+            background: var(--accent);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #636e72;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .category-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .category-item {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .category-title {
+            font-weight: bold;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .link-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .link-item {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid transparent;
+        }
+
+        .link-item:hover {
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .link-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .link-icon {
+            font-size: 20px;
+        }
+
+        .link-text {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .link-title {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .link-url {
+            font-size: 11px;
+            opacity: 0.6;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>🛠️ 导航管理</h1>
+            <div style="display: flex; gap: 10px;">
+                <a href="/" class="btn btn-secondary">返回首页</a>
+                <button class="btn btn-success" onclick="openCategoryModal()">+ 新增分类</button>
+            </div>
+        </header>
+
+        <div id="categoryList" class="category-list">
+            <!-- Categories will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <h3 id="catModalTitle">新增分类</h3>
+            <input type="hidden" id="catId">
+            <div class="form-group">
+                <label>名称</label>
+                <input type="text" id="catName" placeholder="例如：常用工具">
+            </div>
+            <div class="form-group">
+                <label>图标 (Emoji)</label>
+                <input type="text" id="catIcon" placeholder="例如：🛠️">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('categoryModal')">取消</button>
+                <button class="btn" onclick="saveCategory()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Modal -->
+    <div id="linkModal" class="modal">
+        <div class="modal-content">
+            <h3 id="linkModalTitle">新增链接</h3>
+            <input type="hidden" id="linkId">
+            <input type="hidden" id="linkCatId">
+            <div class="form-group">
+                <label>标题</label>
+                <input type="text" id="linkTitle" placeholder="例如：GitHub">
+            </div>
+            <div class="form-group">
+                <label>URL</label>
+                <input type="text" id="linkUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>描述</label>
+                <input type="text" id="linkDesc" placeholder="简短描述">
+            </div>
+            <div class="form-group">
+                <label>图标 (Emoji)</label>
+                <input type="text" id="linkIcon" placeholder="例如：🐙">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('linkModal')">取消</button>
+                <button class="btn" onclick="saveLink()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let categories = [];
+
+        // Fetch Data
+        async function loadData() {
+            const res = await fetch('/api/nav');
+            categories = await res.json();
+            render();
+        }
+
+        // Render UI
+        function render() {
+            const container = document.getElementById('categoryList');
+            container.innerHTML = '';
+
+            categories.forEach((cat, catIndex) => {
+                const catEl = document.createElement('div');
+                catEl.className = 'category-item';
+                catEl.innerHTML = `
+                <div class="category-header">
+                    <div class="category-title">
+                        <span>${cat.icon || '📁'}</span>
+                        <span>${cat.name}</span>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-sm btn-secondary" onclick="moveCategory(${catIndex}, -1)" ${catIndex === 0 ? 'disabled' : ''}>↑</button>
+                        <button class="btn btn-sm btn-secondary" onclick="moveCategory(${catIndex}, 1)" ${catIndex === categories.length - 1 ? 'disabled' : ''}>↓</button>
+                        <button class="btn btn-sm" onclick="openCategoryModal(${cat.id}, '${cat.name}', '${cat.icon}')">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCategory(${cat.id})">删除</button>
+                        <button class="btn btn-sm btn-success" onclick="openLinkModal(null, ${cat.id})">+ 链接</button>
+                    </div>
+                </div>
+                <div class="link-list">
+                    ${(cat.links || []).map((link, linkIndex) => `
+                        <div class="link-item">
+                            <div class="link-info">
+                                <div class="link-icon">${link.icon || '🔗'}</div>
+                                <div class="link-text">
+                                    <div class="link-title">${link.title}</div>
+                                    <div class="link-url">${link.url}</div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button class="btn btn-sm btn-secondary" onclick="moveLink(${cat.id}, ${linkIndex}, -1)" ${linkIndex === 0 ? 'disabled' : ''}>↑</button>
+                                <button class="btn btn-sm btn-secondary" onclick="moveLink(${cat.id}, ${linkIndex}, 1)" ${linkIndex === (cat.links || []).length - 1 ? 'disabled' : ''}>↓</button>
+                                <button class="btn btn-sm" onclick="openLinkModal(${link.id}, ${cat.id})">✏️</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteLink(${link.id})">🗑️</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+                container.appendChild(catEl);
+            });
+        }
+
+        // --- Category Logic ---
+        function openCategoryModal(id = null, name = '', icon = '') {
+            document.getElementById('catId').value = id || '';
+            document.getElementById('catName').value = name;
+            document.getElementById('catIcon').value = icon;
+            document.getElementById('catModalTitle').innerText = id ? '编辑分类' : '新增分类';
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        async function saveCategory() {
+            const id = document.getElementById('catId').value;
+            const data = {
+                name: document.getElementById('catName').value,
+                icon: document.getElementById('catIcon').value
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/categories/${id}` : '/api/categories';
+
+            await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            closeModal('categoryModal');
+            loadData();
+        }
+
+        async function deleteCategory(id) {
+            if (!confirm('确定要删除这个分类吗？所有链接也会被删除！')) return;
+            await fetch(`/api/categories/${id}`, { method: 'DELETE' });
+            loadData();
+        }
+
+        async function moveCategory(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= categories.length) return;
+
+            // Swap
+            const temp = categories[index];
+            categories[index] = categories[newIndex];
+            categories[newIndex] = temp;
+
+            // Send new order to backend
+            const sortedIds = categories.map(c => c.id);
+            await fetch('/api/categories/reorder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sortedIds)
+            });
+            loadData();
+        }
+
+        // --- Link Logic ---
+        function openLinkModal(id, catId) {
+            document.getElementById('linkId').value = id || '';
+            document.getElementById('linkCatId').value = catId;
+
+            // Find existing data if editing
+            if (id) {
+                let link = null;
+                categories.forEach(c => {
+                    if (c.links) {
+                        const found = c.links.find(l => l.id === id);
+                        if (found) link = found;
+                    }
+                });
+                if (link) {
+                    document.getElementById('linkTitle').value = link.title;
+                    document.getElementById('linkUrl').value = link.url;
+                    document.getElementById('linkDesc').value = link.description || '';
+                    document.getElementById('linkIcon').value = link.icon || '';
+                }
+            } else {
+                document.getElementById('linkTitle').value = '';
+                document.getElementById('linkUrl').value = '';
+                document.getElementById('linkDesc').value = '';
+                document.getElementById('linkIcon').value = '';
+            }
+
+            document.getElementById('linkModalTitle').innerText = id ? '编辑链接' : '新增链接';
+            document.getElementById('linkModal').classList.add('active');
+        }
+
+        async function saveLink() {
+            const id = document.getElementById('linkId').value;
+            const catId = document.getElementById('linkCatId').value;
+            const data = {
+                title: document.getElementById('linkTitle').value,
+                url: document.getElementById('linkUrl').value,
+                description: document.getElementById('linkDesc').value,
+                icon: document.getElementById('linkIcon').value,
+                categoryId: catId
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/api/links/${id}` : '/api/links';
+
+            await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            closeModal('linkModal');
+            loadData();
+        }
+
+        async function deleteLink(id) {
+            if (!confirm('确定要删除这个链接吗？')) return;
+            await fetch(`/api/links/${id}`, { method: 'DELETE' });
+            loadData();
+        }
+
+        async function moveLink(catId, index, direction) {
+            const category = categories.find(c => c.id === catId);
+            if (!category || !category.links) return;
+
+            const links = category.links;
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= links.length) return;
+
+            // Swap locally to get IDs
+            const temp = links[index];
+            links[index] = links[newIndex];
+            links[newIndex] = temp;
+
+            const sortedIds = links.map(l => l.id);
+            await fetch('/api/links/reorder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sortedIds)
+            });
+            loadData();
+        }
+
+        // --- Utils ---
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        window.onclick = function (event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Init
+        loadData();
+    </script>
+
+</body>
+
+</html>
