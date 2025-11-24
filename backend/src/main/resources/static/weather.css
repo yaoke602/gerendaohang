@@ -1,0 +1,87 @@
+/* 天气弹窗样式 */
+.weather-card {
+    cursor: pointer;
+}
+
+.weather-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    /* Fallback */
+    background: var(--glass-bg, rgba(255, 255, 255, 0.1));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Fallback */
+    border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+    border-radius: 16px;
+    padding: 15px;
+    min-width: 300px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeInUp 0.3s ease;
+    color: #fff;
+    /* Ensure text is visible */
+    color: var(--text, #fff);
+}
+
+.popup-header {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--glass-border, rgba(255, 255, 255, 0.2));
+}
+
+.forecast-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.forecast-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.forecast-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.forecast-date {
+    opacity: 0.8;
+    min-width: 80px;
+}
+
+.forecast-cond {
+    flex: 1;
+    text-align: center;
+}
+
+.forecast-temp {
+    font-weight: 500;
+    min-width: 100px;
+    text-align: right;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

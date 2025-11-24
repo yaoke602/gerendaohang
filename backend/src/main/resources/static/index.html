@@ -649,6 +649,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="weather.css">
 </head>
 
 <body>
@@ -931,20 +932,20 @@
 
         /* --- 天气组件 (模拟数据) --- */
         // 实际开发中可对接高德/百度天气API
-        function updateWeather() {
-            const weatherLoc = document.getElementById('weatherLoc');
-            const weatherContent = document.getElementById('weatherContent');
+        // function updateWeather() {
+        //     const weatherLoc = document.getElementById('weatherLoc');
+        //     const weatherContent = document.getElementById('weatherContent');
 
-            // 模拟获取地理位置和天气
-            setTimeout(() => {
-                weatherLoc.textContent = '北京';
-                weatherContent.innerHTML = `
-                    <div class="weather-temp">24°C</div>
-                    <div class="weather-desc">晴朗 | 湿度 45%</div>
-                `;
-            }, 1000);
-        }
-        updateWeather();
+        //     // 模拟获取地理位置和天气
+        //     setTimeout(() => {
+        //         weatherLoc.textContent = '北京';
+        //         weatherContent.innerHTML = `
+        //             <div class="weather-temp">24°C</div>
+        //             <div class="weather-desc">晴朗 | 湿度 45%</div>
+        //         `;
+        //     }, 1000);
+        // }
+        // updateWeather();
 
         /* --- 待办事项组件 --- */
         const todoInput = document.getElementById('todoInput');
@@ -1005,6 +1006,9 @@
         renderTodos();
 
     </script>
+
+    <script src="weather.js"></script>
+
 </body>
 
 </html>
