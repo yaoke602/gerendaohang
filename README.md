@@ -50,6 +50,7 @@ daohang/
 │   │   └── pom.xml                              # Maven 配置
 └── 导航2.html                                    # 独立前端版本（可选）
 ```
+<img width="1862" height="830" alt="image" src="https://github.com/user-attachments/assets/95e13d94-6360-443c-acbc-2e879407baad" />
 
 ## 🚀 快速开始
 
